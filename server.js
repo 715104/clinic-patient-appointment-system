@@ -1,4 +1,5 @@
-const patientRoutes = require("../routes/patientRoutes");
+const patientRoutes = require("./routes/patientRoutes");
+const appointmentRoutes = require("./routes/appointmentRoutes");
 
 const express= require("express");
 const mongoose= require("mongoose");
@@ -8,7 +9,7 @@ const app= express();
 app.use(express.json());
 app.use(express.static("public"));
 app.use("/patients", patientRoutes);
-
+app.use("/appointments", appointmentRoutes);
 
 mongoose.connect("mongodb://localhost:27017/clinic")
     .then(() => {
@@ -20,11 +21,8 @@ mongoose.connect("mongodb://localhost:27017/clinic")
     })
 
     .catch ((err) => {
-        error: err.message;
+        console.log("Error:", err);
     })
-app.listen(3000, (req, res) => {
-    console.log("Server is running...")
-})
 
 
 
