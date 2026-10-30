@@ -2,12 +2,14 @@ const Patient = require("../models/Patient");
 
 const createPatient = async (req, res) => {
     try {
+        const { firstName, middleName, lastName, age, sex, phone}= req.body;
         const patient = new Patient({
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            age: req.body.age,
-            sex: req.body.sex,
-            phone: req.body.phone
+            firstName: firstName,
+            middleName: middleName,
+            lastName: lastName,
+            age: age,
+            sex: sex,
+            phone: phone
         });
 
         await patient.save();
@@ -57,10 +59,11 @@ const getPatientById= async (req, res) => {
 
 const updatePatient= async (req, res) => {
     try{
-        const { firstName, lastName, age, sex, phone }= req.body;
+        const { firstName,middleName, lastName, age, sex, phone }= req.body;
         const patient= await Patient.findByIdAndUpdate(req.params.id,
             {
                 firstName: firstName,
+                middleName: middleName,
                 lastName: lastName,
                 age: age,
                 sex: sex,
