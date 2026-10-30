@@ -1,0 +1,105 @@
+.page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.page-subtitle-top {
+    font-size: 13px;
+    font-weight: 600;
+    color: #5C2C16;
+    margin-bottom: 4px;
+}
+
+.page-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #5C2C16;
+    margin-bottom: 4px;
+    letter-spacing: -0.4px;
+}
+
+.page-subtitle {
+    font-size: 14px;
+    font-weight: 400;
+    color: #666666;
+}
+
+.date-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #ffffff;
+    padding: 8px 16px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    font-size: 12px;
+    font-weight: 500;
+    color: #555555;
+    transition: box-shadow 0.2s ease;
+}
+
+.date-badge:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.09);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 24px;
+    width: 100%;
+    flex: 1;
+    min-height: 480px;
+}
+
+.stat-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 36px 32px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 240px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.stat-label {
+    font-size: 20px;
+    font-weight: 600;
+    color: #555555;
+    margin-bottom: 0;
+}
+
+.stat-number {
+    font-size: 96px;
+    font-weight: 800;
+    text-align: center;
+    letter-spacing: -2px;
+    line-height: 1;
+    margin: auto 0;
+    transition: transform 0.2s ease;
+}
+
+.num-navy {
+    color: #002277;
+}
+
+.num-black {
+    color: #000000;
+}
+
+.num-green {
+    color: #16A34A;
+}
+
+.num-red {
+    color: #DC2626;
+}

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediSched</title>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="css/fonts.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/tables.css">
+    <link rel="stylesheet" href="css/modals.css">
+</head>
+<body>
+
+    <div id="loginView">
+        <div class="login-card">
+            <div class="login-left">
+                <div class="login-logo-box">
+                    <img src="assets/images/logo.png" alt="Logo" class="login-logo-img">
+                    <h1 class="logo-text">
+                        <span class="logo-red">Medi</span><span class="logo-blue">Sched</span>
+                    </h1>
+                </div>
+                <img src="assets/images/doctors.png" alt="Doctors" class="login-doctors-img">
+            </div>
+            <div class="login-right">
+                <h2 class="login-title">Login to your account</h2>
+                <p class="login-subtitle">Login to gain access...</p>
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <div class="input-pill">
+                        <img src="assets/icons/mail.svg" alt="Mail" class="icon">
+                        <input id="loginUsername" type="text" placeholder="Enter your username">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="input-pill">
+                        <img src="assets/icons/lock.svg" alt="Lock" class="icon">
+                        <input id="loginPassword" type="password" placeholder="Enter your password">
+                    </div>
+                </div>
+                <p id="loginError" class="login-error hidden">Invalid username or password.</p>
+                <button id="loginBtn" class="btn-login">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="appView" class="hidden">
+        <aside id="sidebar" class="sidebar">
+            <div id="sidebarBrand" class="sidebar-brand" title="Click to toggle sidebar">
+                <img src="assets/images/logo.png" alt="Logo" class="sidebar-logo">
+                <h1 class="logo-title-text logo-text" style="font-size: 22px;">
+                    <span class="logo-red">Medi</span><span class="logo-blue">Sched</span>
+                </h1>
+            </div>
+            <p class="menu-label">Main Menu</p>
+            <div class="nav-list">
+                <button data-page="dashboard" class="nav-btn active" title="Dashboard">
+                    <img src="assets/icons/dashboard.svg" alt="Dashboard" class="icon">
+                    <span class="nav-text">DASHBOARD</span>
+                </button>
+                <button data-page="patients" class="nav-btn" title="Patient">
+                    <img src="assets/icons/patient.svg" alt="Patient" class="icon">
+                    <span class="nav-text">PATIENT</span>
+                </button>
+                <button data-page="appointments" class="nav-btn" title="Appointments">
+                    <img src="assets/icons/calendar.svg" alt="Appointments" class="icon">
+                    <span class="nav-text">APPOINTMENTS</span>
+                </button>
+            </div>
+        </aside>
+
+        <main id="mainContent" class="main-content">
+            <header class="top-header">
+                <div id="searchBarWrapper">
+                    <div class="search-pill">
+                        <img src="assets/icons/search.svg" alt="Search" class="icon">
+                        <input id="searchInput" type="text" placeholder="Search patients">
+                    </div>
+                </div>
+                <div class="header-user-area">
+                    <div class="user-pill">
+                        <div class="avatar-circle">
+                            <img src="assets/icons/avatar.svg" alt="Avatar" class="icon">
+                        </div>
+                        <div>
+                            <p class="user-name">Admin</p>
+                            <p class="user-role">Administrator</p>
+                        </div>
+                    </div>
+                    <button id="signOutBtn" class="btn-signout">Sign Out</button>
+                </div>
+            </header>
+
+            <div id="dashboardPage" class="page">
+                <div class="page-header">
+                    <div>
+                        <p class="page-subtitle-top">Clinic Overview</p>
+                        <h2 class="page-title">Good Day, Admin!</h2>
+                        <p class="page-subtitle">Here's what's happening at your clinic today</p>
+                    </div>
+                    <div class="date-badge">
+                        <img src="assets/icons/calendar.svg" alt="Date" class="icon">
+                        <span id="dashDate"></span>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <p class="stat-label">Today's Appointment</p>
+                        <p id="statToday" class="stat-number num-navy">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="stat-label">Pending Patients</p>
+                        <p id="statPending" class="stat-number num-black">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="stat-label">Scheduled Patients</p>
+                        <p id="statAccepted" class="stat-number num-green">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="stat-label">Cancelled Patients</p>
+                        <p id="statCancelled" class="stat-number num-red">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="patientsPage" class="page hidden">
+                <div class="page-header">
+                    <div>
+                        <p class="page-subtitle-top">Patient Overview</p>
+                        <h2 class="page-title">Good Day, Admin!</h2>
+                        <p class="page-subtitle">Here are the lists of your patients</p>
+                    </div>
+                    <div class="date-badge">
+                        <img src="assets/icons/calendar.svg" alt="Date" class="icon">
+                        <span id="patientDate"></span>
+                    </div>
+                </div>
+                <div class="table-card">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>First Name</th>
+                                <th>Middle Name</th>
+                                <th>Last Name</th>
+                                <th>Contact Number</th>
+                                <th>Age</th>
+                                <th>Gender</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patientTableBody">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="btn-action-right">
+                    <button id="addPatientBtn" class="btn-brown">+ Add Patient</button>
+                </div>
+            </div>
+
+            <div id="appointmentsPage" class="page hidden">
+                <div class="page-header">
+                    <div>
+                        <p class="page-subtitle-top">Appointment Lists</p>
+                        <h2 class="page-title">Good Day, Admin!</h2>
+                        <p class="page-subtitle">Here are the lists of appointments for today.</p>
+                    </div>
+                    <div class="date-badge">
+                        <img src="assets/icons/calendar.svg" alt="Date" class="icon">
+                        <span id="apptDate"></span>
+                    </div>
+                </div>
+                <div class="table-card">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>Patient</th>
+                                <th>Date & Time</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="apptTableBody">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="btn-action-right">
+                    <button id="addApptBtn" class="btn-brown">+ Add an appointment</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="patientModal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <h3 class="modal-title">Add the new patient</h3>
+            <div class="modal-grid-3">
+                <div class="modal-field">
+                    <label class="modal-label">First Name <span style="color: #DC2626;">*</span></label>
+                    <input id="pFirstName" type="text" placeholder="Enter patient's first name" class="modal-input-pill">
+                </div>
+                <div class="modal-field">
+                    <label class="modal-label">Middle Name <span style="color: #DC2626;">*</span></label>
+                    <input id="pMiddleName" type="text" placeholder="Enter patient's middle name" class="modal-input-pill">
+                </div>
+                <div class="modal-field">
+                    <label class="modal-label">Last Name <span style="color: #DC2626;">*</span></label>
+                    <input id="pLastName" type="text" placeholder="Enter patient's last name" class="modal-input-pill">
+                </div>
+            </div>
+            <div class="modal-grid-3">
+                <div class="modal-field">
+                    <label class="modal-label">Contact Number <span style="color: #DC2626;">*</span></label>
+                    <input id="pPhone" type="text" placeholder="Enter patient's contact" class="modal-input-pill">
+                </div>
+                <div class="modal-field">
+                    <label class="modal-label">Age <span style="color: #DC2626;">*</span></label>
+                    <input id="pAge" type="number" placeholder="Enter patient's age" class="modal-input-pill">
+                </div>
+                <div class="modal-field">
+                    <label class="modal-label">Gender <span style="color: #DC2626;">*</span></label>
+                    <select id="pGender" class="modal-input-pill">
+                        <option value="">Select</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-actions-center">
+                <button id="submitPatientBtn" class="btn-brown">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="editPatientModal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <h3 class="modal-title">Edit Patient Information</h3>
+            <input id="editPatientId" type="hidden">
+            <div class="modal-grid-3">
+                <div class="modal-field">
+                    <label class="modal-label">First Name <span style="color: #DC2626;">*</span></label>
+                    <input id="editFirstName" type="text" placeholder="Enter patient's first name" class="modal-input-pill">
+                </div>
+                <div class="modal-field">
+                    <label class="modal-label">Middle Name <span style="color: #DC2626;">*</span></label>
+                    <input id="editMiddleName" type="text" placeholder="Enter patient's middle name" class="modal-input-pill">
+                </div>
+                <div class="modal-field">
+                    <label class="modal-label">Last Name <span style="color: #DC2626;">*</span></label>
+                    <input id="editLastName" type="text" placeholder="Enter patient's last name" class="modal-input-pill">
+                </div>
+            </div>
+            <div class="modal-grid-3">
+                <div class="modal-field">
+                    <label class="modal-label">Contact Number <span style="color: #DC2626;">*</span></label>
+                    <input id="editPhone" type="text" placeholder="Enter patient's contact" class="modal-input-pill">
+                </div>
+                <div class="modal-field">
+                    <label class="modal-label">Age <span style="color: #DC2626;">*</span></label>
+                    <input id="editAge" type="number" placeholder="Enter patient's age" class="modal-input-pill">
+                </div>
+                <div class="modal-field">
+                    <label class="modal-label">Gender <span style="color: #DC2626;">*</span></label>
+                    <select id="editGender" class="modal-input-pill">
+                        <option value="">Select</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button id="cancelEditPatientBtn" class="btn-outline">Cancel</button>
+                <button id="submitEditPatientBtn" class="btn-brown">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="patientSuccessModal" class="modal-overlay hidden">
+        <div class="success-card">
+            <div class="success-logo-box">
+                <img src="assets/images/logo.png" alt="Logo" class="success-logo-img">
+                <span class="logo-text" style="font-size: 16px;"><span class="logo-red">Medi</span><span class="logo-blue">Sched</span></span>
+            </div>
+            <hr class="success-divider">
+            <p id="patientSuccessText" class="success-text">Added Successfully!</p>
+        </div>
+    </div>
+
+    <div id="apptModal" class="modal-overlay hidden">
+        <div class="modal-box-appt">
+            <h3 class="appt-modal-title">BOOK AN APPOINTMENT</h3>
+            <p class="appt-modal-subtitle">Enter the appointment details below</p>
+            <div class="appt-modal-grid">
+                <div class="appt-modal-col">
+                    <div class="modal-field">
+                        <label class="modal-label-bold">Patient</label>
+                        <select id="apptPatientSelect" class="appt-input">
+                            <option value="">Select patient</option>
+                        </select>
+                    </div>
+                    <div class="modal-field">
+                        <label class="modal-label-bold">Reason</label>
+                        <input id="apptReason" type="text" placeholder="Write your reason" class="appt-input">
+                    </div>
+                </div>
+                <div class="appt-modal-col appt-col-right">
+                    <div class="modal-field">
+                        <label class="modal-label-bold">Appointment date and time</label>
+                        <input id="apptDateTime" type="datetime-local" class="appt-input">
+                        <small id="apptTimeHint" class="field-hint">Mon - Fri, 8:00 AM - 5:00 PM only</small>
+                    </div>
+                    <div class="appt-actions-right">
+                        <button id="clearApptBtn" class="btn-clear-form">Clear Form</button>
+                        <button id="saveApptBtn" class="btn-brown">Save Appointment</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="signOutModal" class="modal-overlay hidden">
+        <div class="signout-box">
+            <h3 class="signout-title">Are you sure you want to sign out?</h3>
+            <div class="signout-actions">
+                <button id="cancelSignOutBtn" class="btn-signout-no">No</button>
+                <button id="confirmSignOutBtn" class="btn-signout-yes">Yes</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirmDeleteModal" class="modal-overlay hidden">
+        <div class="signout-box">
+            <h3 class="signout-title">Are you sure you want to delete this patient?</h3>
+            <p class="modal-subtitle" style="text-align: center; margin-bottom: 24px;">This action cannot be undone.</p>
+            <div class="signout-actions">
+                <button id="cancelDeletePatientBtn" class="btn-signout-no">Cancel</button>
+                <button id="confirmDeletePatientBtn" class="btn-delete-confirm">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="alertModal" class="modal-overlay hidden">
+        <div class="signout-box">
+            <h3 id="alertTitle" class="signout-title" style="margin-bottom: 12px;">Notice</h3>
+            <p id="alertMessage" class="modal-subtitle" style="text-align: center; margin-bottom: 24px;">Please fill in all required fields.</p>
+            <div class="signout-actions">
+                <button id="closeAlertBtn" class="btn-signout-yes" style="padding: 10px 42px;">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="apptSuccessModal" class="modal-overlay hidden">
+        <div class="success-card">
+            <div class="success-logo-box">
+                <img src="assets/images/logo.png" alt="Logo" class="success-logo-img">
+                <span class="logo-text" style="font-size: 16px;"><span class="logo-red">Medi</span><span class="logo-blue">Sched</span></span>
+            </div>
+            <hr class="success-divider">
+            <p class="success-text">Appointment Scheduled!</p>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/patients.js"></script>
+    <script src="js/appointments.js"></script>
+</body>
+</html>

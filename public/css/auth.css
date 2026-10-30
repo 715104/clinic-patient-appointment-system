@@ -1,0 +1,167 @@
+#loginView {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #d8dbdf;
+    padding: 20px;
+}
+
+.login-card {
+    display: flex;
+    width: 100%;
+    max-width: 960px;
+    background: #ffffff;
+    border-radius: 26px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    animation: modalPop 0.3s ease-out;
+}
+
+.login-left {
+    width: 50%;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 30px 20px 0;
+    border-right: 1px solid #e2e4e8;
+}
+
+.login-logo-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.login-logo-img {
+    width: 75px;
+    height: 75px;
+    object-fit: contain;
+    margin-bottom: 8px;
+}
+
+.logo-text {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.logo-red {
+    color: #e53e3e;
+}
+
+.logo-blue {
+    color: #1e3a8a;
+}
+
+.login-doctors-img {
+    width: 100%;
+    display: block;
+    margin-top: 20px;
+}
+
+.login-right {
+    width: 50%;
+    background: #FAF6F0;
+    padding: 40px 35px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.login-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #5C2C16;
+    margin-bottom: 4px;
+    letter-spacing: -0.3px;
+}
+
+.login-subtitle {
+    font-size: 13px;
+    font-weight: 400;
+    color: #7A4B3A;
+    margin-bottom: 24px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #222222;
+    margin-bottom: 6px;
+}
+
+.input-pill {
+    display: flex;
+    align-items: center;
+    border: 1px solid #777777;
+    border-radius: 9999px;
+    padding: 8px 16px;
+    background: #ffffff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-pill:focus-within {
+    border-color: #5C2C16;
+    box-shadow: 0 0 0 2px rgba(92, 44, 22, 0.15);
+}
+
+.input-pill img {
+    margin-right: 8px;
+}
+
+.input-pill input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 13px;
+    font-weight: 400;
+    background: transparent;
+    color: #222222;
+}
+
+.input-pill input::placeholder {
+    color: #888888;
+    font-weight: 400;
+}
+
+.login-error {
+    color: #dc2626;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.btn-login {
+    display: block;
+    margin: 8px auto 0;
+    background: #632000;
+    color: #ffffff;
+    border: none;
+    border-radius: 9999px;
+    padding: 10px 42px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(99, 32, 0, 0.25);
+    transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.btn-login:hover {
+    background: #4A1800;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(99, 32, 0, 0.3);
+}
+
+.btn-login:active {
+    transform: translateY(0);
+}
