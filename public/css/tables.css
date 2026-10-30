@@ -3,44 +3,89 @@
     border-radius: 16px;
     border: 1px solid #e0d8cc;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
-    overflow: hidden;
     width: 100%;
-    flex: 1;
-    min-height: 460px;
-    display: flex;
-    flex-direction: column;
+    height: calc(100vh - 270px);
+    max-height: calc(100vh - 270px);
+    min-height: 360px;
+    overflow-y: auto;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #D9CBB8 #FAF6F0;
+}
+
+.table-card::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.table-card::-webkit-scrollbar-track {
+    background: #FAF6F0;
+    border-radius: 8px;
+}
+
+.table-card::-webkit-scrollbar-thumb {
+    background: #D9CBB8;
+    border-radius: 8px;
+}
+
+.table-card::-webkit-scrollbar-thumb:hover {
+    background: #BEAC95;
 }
 
 .custom-table {
     width: 100%;
-    height: 100%;
-    flex: 1;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     text-align: center;
     empty-cells: show;
 }
 
 .custom-table th {
+    position: sticky;
+    top: 0;
+    z-index: 5;
     background: #FDE6C8;
     padding: 16px;
-    font-size: 13px;
+    font-size: 16px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     color: #111111;
     border-bottom: 1px solid #e5d9c8;
     border-right: 1px solid #e5d9c8;
-    height: 52px;
+    height: 56px;
+}
+
+.custom-table th:first-child {
+    border-top-left-radius: 15px;
 }
 
 .custom-table th:last-child {
+    border-top-right-radius: 15px;
     border-right: none;
+}
+
+.appt-sort-th {
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s ease;
+}
+
+.appt-sort-th:hover {
+    background: #fbd6a6;
+}
+
+.sort-indicator {
+    font-size: 11px;
+    margin-left: 6px;
+    opacity: 0.35;
+    transition: opacity 0.15s ease;
 }
 
 .custom-table td {
     padding: 16px;
-    font-size: 13px;
-    font-weight: 400;
+    font-size: 15px;
+    font-weight: 500;
     color: #222222;
     border-bottom: 1px solid #ede4d8;
     border-right: 1px solid #ede4d8;
@@ -58,16 +103,16 @@
 }
 
 .appt-time {
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 400;
     color: #888888;
     margin-top: 2px;
 }
 
 .status-pill {
-    padding: 6px 14px;
+    padding: 7px 16px;
     border-radius: 9999px;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
     border: none;
     outline: none;
@@ -78,14 +123,26 @@
     background-position: right 10px center;
     background-repeat: no-repeat;
     background-size: 10px;
-    padding-right: 28px;
+    padding-right: 30px;
     transition: all 0.2s ease;
+}
+
+.status-pill:disabled {
+    cursor: not-allowed;
+    opacity: 0.95;
+    background-image: none;
+    padding-right: 16px;
 }
 
 .status-pill option {
     background-color: #ffffff;
     color: #222222;
     font-weight: 500;
+}
+
+.status-pill option:disabled {
+    color: #999999;
+    background-color: #f3f3f3;
 }
 
 .status-pill.status-completed {
@@ -107,7 +164,7 @@
 }
 
 .countdown-text {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
     color: #DC2626;
     margin-top: 4px;

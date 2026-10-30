@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediSched</title>
-    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <link rel="icon" type="image/png" href="assets/images/logo.png?v=3">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico?v=3">
     <link rel="stylesheet" href="css/fonts.css">
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/auth.css">
@@ -13,6 +15,7 @@
     <link rel="stylesheet" href="css/tables.css">
     <link rel="stylesheet" href="css/modals.css">
 </head>
+
 <body>
 
     <div id="loginView">
@@ -76,7 +79,7 @@
 
         <main id="mainContent" class="main-content">
             <header class="top-header">
-                <div id="searchBarWrapper">
+                <div id="searchBarWrapper" class="hidden">
                     <div class="search-pill">
                         <img src="assets/icons/search.svg" alt="Search" class="icon">
                         <input id="searchInput" type="text" placeholder="Search patients">
@@ -114,12 +117,12 @@
                         <p id="statToday" class="stat-number num-navy">0</p>
                     </div>
                     <div class="stat-card">
-                        <p class="stat-label">Pending Patients</p>
-                        <p id="statPending" class="stat-number num-black">0</p>
+                        <p class="stat-label">Scheduled Patients</p>
+                        <p id="statScheduled" class="stat-number num-black">0</p>
                     </div>
                     <div class="stat-card">
-                        <p class="stat-label">Scheduled Patients</p>
-                        <p id="statAccepted" class="stat-number num-green">0</p>
+                        <p class="stat-label">Completed Patients</p>
+                        <p id="statCompleted" class="stat-number num-green">0</p>
                     </div>
                     <div class="stat-card">
                         <p class="stat-label">Cancelled Patients</p>
@@ -179,9 +182,9 @@
                         <thead>
                             <tr>
                                 <th>Patient</th>
-                                <th>Date & Time</th>
+                                <th class="appt-sort-th" data-sort="date" title="Sort by Date & Time">Date & Time<span id="sort-icon-date" class="sort-indicator"> ⇅</span></th>
                                 <th>Reason</th>
-                                <th>Status</th>
+                                <th class="appt-sort-th" data-sort="status" title="Sort by Status">Status<span id="sort-icon-status" class="sort-indicator"> ⇅</span></th>
                             </tr>
                         </thead>
                         <tbody id="apptTableBody">
@@ -201,11 +204,13 @@
             <div class="modal-grid-3">
                 <div class="modal-field">
                     <label class="modal-label">First Name <span style="color: #DC2626;">*</span></label>
-                    <input id="pFirstName" type="text" placeholder="Enter patient's first name" class="modal-input-pill">
+                    <input id="pFirstName" type="text" placeholder="Enter patient's first name"
+                        class="modal-input-pill">
                 </div>
                 <div class="modal-field">
                     <label class="modal-label">Middle Name <span style="color: #DC2626;">*</span></label>
-                    <input id="pMiddleName" type="text" placeholder="Enter patient's middle name" class="modal-input-pill">
+                    <input id="pMiddleName" type="text" placeholder="Enter patient's middle name"
+                        class="modal-input-pill">
                 </div>
                 <div class="modal-field">
                     <label class="modal-label">Last Name <span style="color: #DC2626;">*</span></label>
@@ -243,15 +248,18 @@
             <div class="modal-grid-3">
                 <div class="modal-field">
                     <label class="modal-label">First Name <span style="color: #DC2626;">*</span></label>
-                    <input id="editFirstName" type="text" placeholder="Enter patient's first name" class="modal-input-pill">
+                    <input id="editFirstName" type="text" placeholder="Enter patient's first name"
+                        class="modal-input-pill">
                 </div>
                 <div class="modal-field">
                     <label class="modal-label">Middle Name <span style="color: #DC2626;">*</span></label>
-                    <input id="editMiddleName" type="text" placeholder="Enter patient's middle name" class="modal-input-pill">
+                    <input id="editMiddleName" type="text" placeholder="Enter patient's middle name"
+                        class="modal-input-pill">
                 </div>
                 <div class="modal-field">
                     <label class="modal-label">Last Name <span style="color: #DC2626;">*</span></label>
-                    <input id="editLastName" type="text" placeholder="Enter patient's last name" class="modal-input-pill">
+                    <input id="editLastName" type="text" placeholder="Enter patient's last name"
+                        class="modal-input-pill">
                 </div>
             </div>
             <div class="modal-grid-3">
@@ -283,7 +291,8 @@
         <div class="success-card">
             <div class="success-logo-box">
                 <img src="assets/images/logo.png" alt="Logo" class="success-logo-img">
-                <span class="logo-text" style="font-size: 16px;"><span class="logo-red">Medi</span><span class="logo-blue">Sched</span></span>
+                <span class="logo-text" style="font-size: 16px;"><span class="logo-red">Medi</span><span
+                        class="logo-blue">Sched</span></span>
             </div>
             <hr class="success-divider">
             <p id="patientSuccessText" class="success-text">Added Successfully!</p>
@@ -346,7 +355,8 @@
     <div id="alertModal" class="modal-overlay hidden">
         <div class="signout-box">
             <h3 id="alertTitle" class="signout-title" style="margin-bottom: 12px;">Notice</h3>
-            <p id="alertMessage" class="modal-subtitle" style="text-align: center; margin-bottom: 24px;">Please fill in all required fields.</p>
+            <p id="alertMessage" class="modal-subtitle" style="text-align: center; margin-bottom: 24px;">Please fill in
+                all required fields.</p>
             <div class="signout-actions">
                 <button id="closeAlertBtn" class="btn-signout-yes" style="padding: 10px 42px;">OK</button>
             </div>
@@ -357,7 +367,8 @@
         <div class="success-card">
             <div class="success-logo-box">
                 <img src="assets/images/logo.png" alt="Logo" class="success-logo-img">
-                <span class="logo-text" style="font-size: 16px;"><span class="logo-red">Medi</span><span class="logo-blue">Sched</span></span>
+                <span class="logo-text" style="font-size: 16px;"><span class="logo-red">Medi</span><span
+                        class="logo-blue">Sched</span></span>
             </div>
             <hr class="success-divider">
             <p class="success-text">Appointment Scheduled!</p>
@@ -370,4 +381,5 @@
     <script src="js/patients.js"></script>
     <script src="js/appointments.js"></script>
 </body>
+
 </html>

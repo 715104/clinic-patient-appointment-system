@@ -1,26 +1,195 @@
-var apptModal = document.getElementById("apptModal")
-var apptSuccessModal = document.getElementById("apptSuccessModal")
-var addApptBtn = document.getElementById("addApptBtn")
-var saveApptBtn = document.getElementById("saveApptBtn")
-var clearApptBtn = document.getElementById("clearApptBtn")
-var appointmentDeleteTimers = {}
+let apptModal = document.getElementById("apptModal")
+let apptSuccessModal = document.getElementById("apptSuccessModal")
+let addApptBtn = document.getElementById("addApptBtn")
+let saveApptBtn = document.getElementById("saveApptBtn")
+let clearApptBtn = document.getElementById("clearApptBtn")
+
+let allAppointments = []
+let currentSortCol = null
+let currentSortDir = "asc"
 
 function formatApptDate(dateStr) {
-    var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-    var d = new Date(dateStr)
+    let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    let d = new Date(dateStr)
     return months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear()
 }
 
 function formatApptTime(dateStr) {
-    var d = new Date(dateStr)
-    var hours = d.getHours()
-    var minutes = d.getMinutes()
-    var ampm = hours >= 12 ? "PM" : "AM"
+    let d = new Date(dateStr)
+    let hours = d.getHours()
+    let minutes = d.getMinutes()
+    let ampm = hours >= 12 ? "PM" : "AM"
     hours = hours % 12
     if (hours === 0) hours = 12
-    var minStr = minutes < 10 ? "0" + minutes : minutes
+    let minStr = minutes < 10 ? "0" + minutes : minutes
     return hours + ":" + minStr + " " + ampm
 }
+
+function sortAppointments(list) {
+    if (!currentSortCol) return list
+
+    return list.slice().sort(function (a, b) {
+        if (currentSortCol === "date") {
+            let timeA = new Date(a.appointmentDate).getTime() || 0
+            let timeB = new Date(b.appointmentDate).getTime() || 0
+            return currentSortDir === "asc" ? timeA - timeB : timeB - timeA
+        }
+
+        if (currentSortCol === "status") {
+            let valA = (a.status || "").toLowerCase()
+            let valB = (b.status || "").toLowerCase()
+            if (valA < valB) return currentSortDir === "asc" ? -1 : 1
+            if (valA > valB) return currentSortDir === "asc" ? 1 : -1
+            return 0
+        }
+
+        return 0
+    })
+}
+
+function updateSortIndicators() {
+    let cols = ["date", "status"]
+    cols.forEach(function (col) {
+        let iconEl = document.getElementById("sort-icon-" + col)
+        if (iconEl) {
+            if (currentSortCol === col) {
+                iconEl.textContent = currentSortDir === "asc" ? " ▲" : " ▼"
+                iconEl.style.opacity = "1"
+            } else {
+                iconEl.textContent = " ⇅"
+                iconEl.style.opacity = "0.35"
+            }
+        }
+    })
+}
+
+function renderAppointmentsTable() {
+    let tbody = document.getElementById("apptTableBody")
+    if (!tbody) return
+    tbody.innerHTML = ""
+
+    let sorted = sortAppointments(allAppointments)
+
+    sorted.forEach(function (appt) {
+        let patient = appt.patientId
+        let fullName = ""
+        let patientId = ""
+        if (patient) {
+            let mid = patient.middleName ? " " + patient.middleName + " " : " "
+            fullName = patient.firstName + mid + patient.lastName
+            patientId = patient._id
+        }
+
+        let statusLower = (appt.status || "Scheduled").toLowerCase()
+        let apptTime = new Date(appt.appointmentDate).getTime()
+        let nowTime = new Date().getTime()
+        let canComplete = nowTime >= apptTime
+        let isCancelled = appt.status === "Cancelled"
+
+        let tr = document.createElement("tr")
+        tr.innerHTML =
+            '<td>' + fullName + '</td>' +
+            '<td><div>' + formatApptDate(appt.appointmentDate) + '</div><div class="appt-time">' + formatApptTime(appt.appointmentDate) + '</div></td>' +
+            '<td>' + (appt.reason || "Consultation") + '</td>' +
+            '<td>' +
+                '<select data-id="' + appt._id + '" data-patient="' + patientId + '" data-date="' + appt.appointmentDate + '" data-reason="' + (appt.reason || "Consultation") + '" data-prev-status="' + (appt.status || "Scheduled") + '" class="status-pill status-' + statusLower + ' status-select"' + (isCancelled ? " disabled" : "") + '>' +
+                    '<option value="Completed"' + (appt.status === "Completed" ? " selected" : "") + (canComplete && !isCancelled ? "" : " disabled") + '>Completed</option>' +
+                    '<option value="Scheduled"' + (appt.status === "Scheduled" ? " selected" : "") + (isCancelled ? " disabled" : "") + '>Scheduled</option>' +
+                    '<option value="Cancelled"' + (appt.status === "Cancelled" ? " selected" : "") + '>Cancelled</option>' +
+                '</select>' +
+            '</td>'
+        tbody.appendChild(tr)
+    })
+
+    let emptyRows = 6 - sorted.length
+    for (let i = 0; i < emptyRows && i < 6; i++) {
+        let tr = document.createElement("tr")
+        tr.innerHTML =
+            '<td>&nbsp;</td>' +
+            '<td>&nbsp;</td>' +
+            '<td>&nbsp;</td>' +
+            '<td>&nbsp;</td>'
+        tbody.appendChild(tr)
+    }
+
+    document.querySelectorAll(".status-select").forEach(function (sel) {
+        sel.addEventListener("change", function () {
+            let id = sel.getAttribute("data-id")
+            let patientId = sel.getAttribute("data-patient")
+            let apptDate = sel.getAttribute("data-date")
+            let reason = sel.getAttribute("data-reason")
+            let prevStatus = sel.getAttribute("data-prev-status") || "Scheduled"
+            let newStatus = sel.value
+
+            let apptTime = new Date(apptDate).getTime()
+            let nowTime = new Date().getTime()
+
+            if (prevStatus === "Cancelled" && newStatus === "Scheduled") {
+                sel.value = "Cancelled"
+                sel.className = "status-pill status-cancelled status-select"
+                if (typeof showAlert === "function") {
+                    showAlert("Cancelled appointments cannot be put back to Scheduled. Please create a new appointment.")
+                }
+                return
+            }
+
+            if (newStatus === "Completed" && nowTime < apptTime) {
+                sel.value = prevStatus
+                sel.className = "status-pill status-" + prevStatus.toLowerCase() + " status-select"
+                if (typeof showAlert === "function") {
+                    showAlert("Appointments can only be marked as Completed during or after the appointment date.")
+                }
+                return
+            }
+
+            sel.setAttribute("data-prev-status", newStatus)
+            sel.className = "status-pill status-" + newStatus.toLowerCase() + " status-select"
+
+            if (newStatus === "Cancelled") {
+                sel.disabled = true
+            }
+
+            for (let i = 0; i < allAppointments.length; i++) {
+                if (allAppointments[i]._id === id) {
+                    allAppointments[i].status = newStatus
+                    break
+                }
+            }
+
+            fetch("/appointments/" + id, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    patientId: patientId,
+                    appointmentDate: apptDate,
+                    reason: reason,
+                    status: newStatus
+                })
+            })
+                .then(function (response) {
+                    return response.json()
+                })
+                .then(function (data) {
+                    if (typeof loadDashboard === "function") loadDashboard()
+                })
+        })
+    })
+
+    updateSortIndicators()
+}
+
+document.querySelectorAll(".appt-sort-th").forEach(function (th) {
+    th.addEventListener("click", function () {
+        let col = th.getAttribute("data-sort")
+        if (currentSortCol === col) {
+            currentSortDir = currentSortDir === "asc" ? "desc" : "asc"
+        } else {
+            currentSortCol = col
+            currentSortDir = "asc"
+        }
+        renderAppointmentsTable()
+    })
+})
 
 function loadAppointments() {
     fetch("/appointments")
@@ -28,114 +197,8 @@ function loadAppointments() {
             return response.json()
         })
         .then(function (appointments) {
-            var tbody = document.getElementById("apptTableBody")
-            tbody.innerHTML = ""
-
-            appointments.forEach(function (appt) {
-                var patient = appt.patientId
-                var fullName = ""
-                var patientId = ""
-                if (patient) {
-                    var mid = patient.middleName ? " " + patient.middleName + " " : " "
-                    fullName = patient.firstName + mid + patient.lastName
-                    patientId = patient._id
-                }
-
-                var statusLower = (appt.status || "Scheduled").toLowerCase()
-
-                var tr = document.createElement("tr")
-                tr.innerHTML =
-                    '<td>' + fullName + '</td>' +
-                    '<td><div>' + formatApptDate(appt.appointmentDate) + '</div><div class="appt-time">' + formatApptTime(appt.appointmentDate) + '</div></td>' +
-                    '<td>' + (appt.reason || "Consultation") + '</td>' +
-                    '<td>' +
-                        '<select data-id="' + appt._id + '" data-patient="' + patientId + '" data-date="' + appt.appointmentDate + '" data-reason="' + (appt.reason || "Consultation") + '" class="status-pill status-' + statusLower + ' status-select">' +
-                            '<option value="Completed"' + (appt.status === "Completed" ? " selected" : "") + '>Completed</option>' +
-                            '<option value="Scheduled"' + (appt.status === "Scheduled" ? " selected" : "") + '>Scheduled</option>' +
-                            '<option value="Cancelled"' + (appt.status === "Cancelled" ? " selected" : "") + '>Cancelled</option>' +
-                        '</select>' +
-                    '</td>'
-                tbody.appendChild(tr)
-            })
-
-            var emptyRows = 6 - appointments.length
-            for (var i = 0; i < emptyRows && i < 6; i++) {
-                var tr = document.createElement("tr")
-                tr.innerHTML =
-                    '<td>&nbsp;</td>' +
-                    '<td>&nbsp;</td>' +
-                    '<td>&nbsp;</td>' +
-                    '<td>&nbsp;</td>'
-                tbody.appendChild(tr)
-            }
-
-            document.querySelectorAll(".status-select").forEach(function (sel) {
-                sel.addEventListener("change", function () {
-                    var id = sel.getAttribute("data-id")
-                    var patientId = sel.getAttribute("data-patient")
-                    var apptDate = sel.getAttribute("data-date")
-                    var reason = sel.getAttribute("data-reason")
-                    var newStatus = sel.value
-
-                    sel.className = "status-pill status-" + newStatus.toLowerCase() + " status-select"
-
-                    fetch("/appointments/" + id, {
-                        method: "PUT",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            patientId: patientId,
-                            appointmentDate: apptDate,
-                            reason: reason,
-                            status: newStatus
-                        })
-                    })
-                        .then(function (response) {
-                            return response.json()
-                        })
-                        .then(function (data) {
-                            if (typeof loadDashboard === "function") loadDashboard()
-                        })
-
-                    if (appointmentDeleteTimers[id]) {
-                        clearInterval(appointmentDeleteTimers[id])
-                        delete appointmentDeleteTimers[id]
-                    }
-
-                    var existingCountdown = sel.parentElement.querySelector(".countdown-text")
-                    if (existingCountdown) {
-                        existingCountdown.remove()
-                    }
-
-                    if (newStatus === "Completed" || newStatus === "Cancelled") {
-                        var secondsLeft = 10
-                        var countdown = document.createElement("div")
-                        countdown.className = "countdown-text"
-                        countdown.textContent = "Deleting in " + secondsLeft + "s"
-                        sel.parentElement.appendChild(countdown)
-
-                        appointmentDeleteTimers[id] = setInterval(function () {
-                            secondsLeft = secondsLeft - 1
-                            if (secondsLeft > 0) {
-                                countdown.textContent = "Deleting in " + secondsLeft + "s"
-                            } else {
-                                clearInterval(appointmentDeleteTimers[id])
-                                delete appointmentDeleteTimers[id]
-
-                                fetch("/appointments/" + id, {
-                                    method: "DELETE"
-                                })
-                                    .then(function (response) {
-                                        return response.json()
-                                    })
-                                    .then(function (data) {
-                                        loadAppointments()
-                                        if (typeof loadDashboard === "function") loadDashboard()
-                                    })
-                            }
-                        }, 1000)
-                    }
-                })
-            })
+            allAppointments = appointments
+            renderAppointmentsTable()
         })
 }
 
@@ -145,19 +208,19 @@ addApptBtn.addEventListener("click", function () {
     saveApptBtn.disabled = false
     saveApptBtn.classList.remove("btn-disabled")
 
-    var hint = document.getElementById("apptTimeHint")
+    let hint = document.getElementById("apptTimeHint")
     if (hint) {
         hint.textContent = "Mon - Fri, 8:00 AM - 5:00 PM only"
         hint.style.color = "#888888"
     }
 
-    var now = new Date()
-    var year = now.getFullYear()
-    var month = String(now.getMonth() + 1).padStart(2, "0")
-    var day = String(now.getDate()).padStart(2, "0")
+    let now = new Date()
+    let year = now.getFullYear()
+    let month = String(now.getMonth() + 1).padStart(2, "0")
+    let day = String(now.getDate()).padStart(2, "0")
     document.getElementById("apptDateTime").min = year + "-" + month + "-" + day + "T08:00"
 
-    var select = document.getElementById("apptPatientSelect")
+    let select = document.getElementById("apptPatientSelect")
     select.innerHTML = '<option value="">Select patient</option>'
 
     fetch("/patients")
@@ -166,9 +229,9 @@ addApptBtn.addEventListener("click", function () {
         })
         .then(function (patients) {
             patients.forEach(function (p) {
-                var option = document.createElement("option")
+                let option = document.createElement("option")
                 option.value = p._id
-                var mid = p.middleName ? " " + p.middleName + " " : " "
+                let mid = p.middleName ? " " + p.middleName + " " : " "
                 option.textContent = p.firstName + mid + p.lastName
                 select.appendChild(option)
             })
@@ -189,7 +252,7 @@ clearApptBtn.addEventListener("click", function () {
     document.getElementById("apptReason").value = ""
     saveApptBtn.disabled = false
     saveApptBtn.classList.remove("btn-disabled")
-    var hint = document.getElementById("apptTimeHint")
+    let hint = document.getElementById("apptTimeHint")
     if (hint) {
         hint.textContent = "Mon - Fri, 8:00 AM - 5:00 PM only"
         hint.style.color = "#888888"
@@ -197,8 +260,8 @@ clearApptBtn.addEventListener("click", function () {
 })
 
 document.getElementById("apptDateTime").addEventListener("input", function () {
-    var val = this.value
-    var hint = document.getElementById("apptTimeHint")
+    let val = this.value
+    let hint = document.getElementById("apptTimeHint")
 
     if (!val) {
         saveApptBtn.disabled = false
@@ -210,13 +273,13 @@ document.getElementById("apptDateTime").addEventListener("input", function () {
         return
     }
 
-    var d = new Date(val)
-    var dayOfWeek = d.getDay()
-    var hours = d.getHours()
-    var minutes = d.getMinutes()
+    let d = new Date(val)
+    let dayOfWeek = d.getDay()
+    let hours = d.getHours()
+    let minutes = d.getMinutes()
 
-    var isWeekend = (dayOfWeek === 0 || dayOfWeek === 6)
-    var isOutsideHours = (hours < 8 || hours > 17 || (hours === 17 && minutes > 0))
+    let isWeekend = (dayOfWeek === 0 || dayOfWeek === 6)
+    let isOutsideHours = (hours < 8 || hours > 17 || (hours === 17 && minutes > 0))
 
     if (isWeekend || isOutsideHours) {
         saveApptBtn.disabled = true
@@ -236,18 +299,18 @@ document.getElementById("apptDateTime").addEventListener("input", function () {
 })
 
 document.getElementById("apptDateTime").addEventListener("change", function () {
-    var val = this.value
-    var hint = document.getElementById("apptTimeHint")
+    let val = this.value
+    let hint = document.getElementById("apptTimeHint")
 
     if (!val) return
 
-    var d = new Date(val)
-    var dayOfWeek = d.getDay()
-    var hours = d.getHours()
-    var minutes = d.getMinutes()
+    let d = new Date(val)
+    let dayOfWeek = d.getDay()
+    let hours = d.getHours()
+    let minutes = d.getMinutes()
 
-    var isWeekend = (dayOfWeek === 0 || dayOfWeek === 6)
-    var isOutsideHours = (hours < 8 || hours > 17 || (hours === 17 && minutes > 0))
+    let isWeekend = (dayOfWeek === 0 || dayOfWeek === 6)
+    let isOutsideHours = (hours < 8 || hours > 17 || (hours === 17 && minutes > 0))
 
     if (isWeekend || isOutsideHours) {
         saveApptBtn.disabled = true
@@ -269,24 +332,24 @@ document.getElementById("apptDateTime").addEventListener("change", function () {
 saveApptBtn.addEventListener("click", function () {
     if (saveApptBtn.disabled) return
 
-    var patientId = document.getElementById("apptPatientSelect").value
-    var dateTime = document.getElementById("apptDateTime").value
-    var reason = document.getElementById("apptReason").value.trim() || "Consultation"
+    let patientId = document.getElementById("apptPatientSelect").value
+    let dateTime = document.getElementById("apptDateTime").value
+    let reason = document.getElementById("apptReason").value.trim() || "Consultation"
 
     if (!patientId || !dateTime) {
         showAlert("Please select a patient and appointment date/time.")
         return
     }
 
-    var selectedDate = new Date(dateTime)
-    var day = selectedDate.getDay()
-    var hours = selectedDate.getHours()
-    var minutes = selectedDate.getMinutes()
+    let selectedDate = new Date(dateTime)
+    let day = selectedDate.getDay()
+    let hours = selectedDate.getHours()
+    let minutes = selectedDate.getMinutes()
 
     if (day === 0 || day === 6 || hours < 8 || hours > 17 || (hours === 17 && minutes > 0)) {
         saveApptBtn.disabled = true
         saveApptBtn.classList.add("btn-disabled")
-        var hint = document.getElementById("apptTimeHint")
+        let hint = document.getElementById("apptTimeHint")
         if (hint) {
             hint.textContent = "Appointments are only available between 8:00 AM and 5:00 PM (Mon - Fri)"
             hint.style.color = "#DC2626"

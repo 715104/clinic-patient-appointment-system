@@ -1,20 +1,20 @@
-var loginView = document.getElementById("loginView")
-var appView = document.getElementById("appView")
-var loginBtn = document.getElementById("loginBtn")
-var loginError = document.getElementById("loginError")
-var signOutBtn = document.getElementById("signOutBtn")
+let loginView = document.getElementById("loginView")
+let appView = document.getElementById("appView")
+let loginBtn = document.getElementById("loginBtn")
+let loginError = document.getElementById("loginError")
+let signOutBtn = document.getElementById("signOutBtn")
 
 function showAlert(message) {
-    var modal = document.getElementById("alertModal")
-    var msg = document.getElementById("alertMessage")
+    let modal = document.getElementById("alertModal")
+    let msg = document.getElementById("alertMessage")
     if (modal && msg) {
         msg.textContent = message
         modal.classList.remove("hidden")
     }
 }
 
-var alertModal = document.getElementById("alertModal")
-var closeAlertBtn = document.getElementById("closeAlertBtn")
+let alertModal = document.getElementById("alertModal")
+let closeAlertBtn = document.getElementById("closeAlertBtn")
 
 if (closeAlertBtn && alertModal) {
     closeAlertBtn.addEventListener("click", function () {
@@ -41,8 +41,8 @@ function checkAuth() {
 }
 
 loginBtn.addEventListener("click", function () {
-    var username = document.getElementById("loginUsername").value
-    var password = document.getElementById("loginPassword").value
+    let username = document.getElementById("loginUsername").value
+    let password = document.getElementById("loginPassword").value
 
     if (username === "admin" && password === "12345678") {
         localStorage.setItem("loggedIn", "true")
@@ -59,9 +59,9 @@ document.getElementById("loginPassword").addEventListener("keydown", function (e
     }
 })
 
-var signOutModal = document.getElementById("signOutModal")
-var cancelSignOutBtn = document.getElementById("cancelSignOutBtn")
-var confirmSignOutBtn = document.getElementById("confirmSignOutBtn")
+let signOutModal = document.getElementById("signOutModal")
+let cancelSignOutBtn = document.getElementById("cancelSignOutBtn")
+let confirmSignOutBtn = document.getElementById("confirmSignOutBtn")
 
 signOutBtn.addEventListener("click", function () {
     signOutModal.classList.remove("hidden")

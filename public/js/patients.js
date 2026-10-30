@@ -1,18 +1,18 @@
-var patientModal = document.getElementById("patientModal")
-var editPatientModal = document.getElementById("editPatientModal")
-var patientSuccessModal = document.getElementById("patientSuccessModal")
-var patientSuccessText = document.getElementById("patientSuccessText")
-var addPatientBtn = document.getElementById("addPatientBtn")
-var submitPatientBtn = document.getElementById("submitPatientBtn")
-var cancelEditPatientBtn = document.getElementById("cancelEditPatientBtn")
-var submitEditPatientBtn = document.getElementById("submitEditPatientBtn")
+let patientModal = document.getElementById("patientModal")
+let editPatientModal = document.getElementById("editPatientModal")
+let patientSuccessModal = document.getElementById("patientSuccessModal")
+let patientSuccessText = document.getElementById("patientSuccessText")
+let addPatientBtn = document.getElementById("addPatientBtn")
+let submitPatientBtn = document.getElementById("submitPatientBtn")
+let cancelEditPatientBtn = document.getElementById("cancelEditPatientBtn")
+let submitEditPatientBtn = document.getElementById("submitEditPatientBtn")
 
-var confirmDeleteModal = document.getElementById("confirmDeleteModal")
-var cancelDeletePatientBtn = document.getElementById("cancelDeletePatientBtn")
-var confirmDeletePatientBtn = document.getElementById("confirmDeletePatientBtn")
-var selectedPatientIdToDelete = null
+let confirmDeleteModal = document.getElementById("confirmDeleteModal")
+let cancelDeletePatientBtn = document.getElementById("cancelDeletePatientBtn")
+let confirmDeletePatientBtn = document.getElementById("confirmDeletePatientBtn")
+let selectedPatientIdToDelete = null
 
-var allPatientsData = []
+let allPatientsData = []
 
 function loadPatients() {
     fetch("/patients")
@@ -21,11 +21,11 @@ function loadPatients() {
         })
         .then(function (patients) {
             allPatientsData = patients
-            var tbody = document.getElementById("patientTableBody")
+            let tbody = document.getElementById("patientTableBody")
             tbody.innerHTML = ""
 
             patients.forEach(function (p) {
-                var tr = document.createElement("tr")
+                let tr = document.createElement("tr")
                 tr.innerHTML =
                     '<td>' + (p.firstName || "") + '</td>' +
                     '<td>' + (p.middleName || "") + '</td>' +
@@ -46,9 +46,9 @@ function loadPatients() {
                 tbody.appendChild(tr)
             })
 
-            var emptyRows = 6 - patients.length
-            for (var i = 0; i < emptyRows && i < 6; i++) {
-                var tr = document.createElement("tr")
+            let emptyRows = 6 - patients.length
+            for (let i = 0; i < emptyRows && i < 6; i++) {
+                let tr = document.createElement("tr")
                 tr.innerHTML =
                     '<td>&nbsp;</td>' +
                     '<td>&nbsp;</td>' +
@@ -62,8 +62,8 @@ function loadPatients() {
 
             document.querySelectorAll(".btn-action-edit").forEach(function (btn) {
                 btn.addEventListener("click", function () {
-                    var id = btn.getAttribute("data-id")
-                    var patient = allPatientsData.find(function (item) {
+                    let id = btn.getAttribute("data-id")
+                    let patient = allPatientsData.find(function (item) {
                         return item._id === id
                     })
                     if (patient) {
@@ -102,7 +102,7 @@ confirmDeleteModal.addEventListener("click", function (e) {
 
 confirmDeletePatientBtn.addEventListener("click", function () {
     if (!selectedPatientIdToDelete) return
-    var id = selectedPatientIdToDelete
+    let id = selectedPatientIdToDelete
     confirmDeleteModal.classList.add("hidden")
     selectedPatientIdToDelete = null
 
@@ -154,12 +154,12 @@ editPatientModal.addEventListener("click", function (e) {
 })
 
 submitPatientBtn.addEventListener("click", function () {
-    var first = document.getElementById("pFirstName").value.trim()
-    var middle = document.getElementById("pMiddleName").value.trim()
-    var last = document.getElementById("pLastName").value.trim()
-    var phone = document.getElementById("pPhone").value.trim()
-    var age = document.getElementById("pAge").value.trim()
-    var gender = document.getElementById("pGender").value
+    let first = document.getElementById("pFirstName").value.trim()
+    let middle = document.getElementById("pMiddleName").value.trim()
+    let last = document.getElementById("pLastName").value.trim()
+    let phone = document.getElementById("pPhone").value.trim()
+    let age = document.getElementById("pAge").value.trim()
+    let gender = document.getElementById("pGender").value
 
     if (!first || !middle || !last || !phone || !age || !gender) {
         showAlert("Please fill in all required fields.")
@@ -193,13 +193,13 @@ submitPatientBtn.addEventListener("click", function () {
 })
 
 submitEditPatientBtn.addEventListener("click", function () {
-    var id = document.getElementById("editPatientId").value
-    var first = document.getElementById("editFirstName").value.trim()
-    var middle = document.getElementById("editMiddleName").value.trim()
-    var last = document.getElementById("editLastName").value.trim()
-    var phone = document.getElementById("editPhone").value.trim()
-    var age = document.getElementById("editAge").value.trim()
-    var gender = document.getElementById("editGender").value
+    let id = document.getElementById("editPatientId").value
+    let first = document.getElementById("editFirstName").value.trim()
+    let middle = document.getElementById("editMiddleName").value.trim()
+    let last = document.getElementById("editLastName").value.trim()
+    let phone = document.getElementById("editPhone").value.trim()
+    let age = document.getElementById("editAge").value.trim()
+    let gender = document.getElementById("editGender").value
 
     if (!first || !middle || !last || !phone || !age || !gender) {
         showAlert("Please fill in all required fields.")

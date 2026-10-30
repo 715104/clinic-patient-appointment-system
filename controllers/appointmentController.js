@@ -70,6 +70,19 @@ const updateAppointment= async (req, res) => {
     try{
         const { patientId, appointmentDate, reason, status }= req.body
 
+        const existing = await Appointment.findById(req.params.id);
+        if(!existing){
+            return res.status(404).json({
+                message: "Appointment not found."
+            });
+        }
+
+        if(existing.status === "Cancelled" && status === "Scheduled"){
+            return res.status(400).json({
+                message: "Cancelled appointments cannot be put back to Scheduled."
+            });
+        }
+
         const appointment= await Appointment.findByIdAndUpdate(req.params.id,
             {
                 patientId: patientId,

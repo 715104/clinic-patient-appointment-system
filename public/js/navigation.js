@@ -1,10 +1,10 @@
-var navButtons = document.querySelectorAll(".nav-btn")
-var pages = document.querySelectorAll(".page")
-var searchBarWrapper = document.getElementById("searchBarWrapper")
-var searchInput = document.getElementById("searchInput")
-var sidebar = document.getElementById("sidebar")
-var mainContent = document.getElementById("mainContent")
-var sidebarBrand = document.getElementById("sidebarBrand")
+let navButtons = document.querySelectorAll(".nav-btn")
+let pages = document.querySelectorAll(".page")
+let searchBarWrapper = document.getElementById("searchBarWrapper")
+let searchInput = document.getElementById("searchInput")
+let sidebar = document.getElementById("sidebar")
+let mainContent = document.getElementById("mainContent")
+let sidebarBrand = document.getElementById("sidebarBrand")
 
 if (sidebarBrand) {
     sidebarBrand.addEventListener("click", function () {
@@ -14,9 +14,9 @@ if (sidebarBrand) {
 }
 
 function getFormattedDate() {
-    var days = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"]
-    var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-    var now = new Date()
+    let days = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"]
+    let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    let now = new Date()
     return days[now.getDay()] + ", " + months[now.getMonth()] + " " + now.getDate() + ", " + now.getFullYear()
 }
 
@@ -29,7 +29,7 @@ function showPage(pageName) {
         btn.classList.remove("active")
     })
 
-    var activePage = document.getElementById(pageName + "Page")
+    let activePage = document.getElementById(pageName + "Page")
     if (activePage) {
         activePage.classList.remove("hidden")
     }
@@ -41,23 +41,38 @@ function showPage(pageName) {
     })
 
     if (pageName === "dashboard") {
+        if (searchBarWrapper) {
+            searchBarWrapper.classList.add("hidden")
+        }
         loadDashboard()
     }
 
     if (pageName === "patients") {
-        searchInput.placeholder = "Search patients"
+        if (searchBarWrapper) {
+            searchBarWrapper.classList.remove("hidden")
+        }
+        if (searchInput) {
+            searchInput.value = ""
+            searchInput.placeholder = "Search patients"
+        }
         loadPatients()
     }
 
     if (pageName === "appointments") {
-        searchInput.placeholder = "Search patients"
+        if (searchBarWrapper) {
+            searchBarWrapper.classList.remove("hidden")
+        }
+        if (searchInput) {
+            searchInput.value = ""
+            searchInput.placeholder = "Search appointments"
+        }
         loadAppointments()
     }
 
-    var dateStr = getFormattedDate()
-    var dashDate = document.getElementById("dashDate")
-    var patientDate = document.getElementById("patientDate")
-    var apptDate = document.getElementById("apptDate")
+    let dateStr = getFormattedDate()
+    let dashDate = document.getElementById("dashDate")
+    let patientDate = document.getElementById("patientDate")
+    let apptDate = document.getElementById("apptDate")
     if (dashDate) dashDate.textContent = dateStr
     if (patientDate) patientDate.textContent = dateStr
     if (apptDate) apptDate.textContent = dateStr
@@ -69,31 +84,26 @@ navButtons.forEach(function (btn) {
     })
 })
 
-searchInput.addEventListener("input", function () {
-    var query = searchInput.value.toLowerCase()
-    var dashboardPage = document.getElementById("dashboardPage")
-    var patientsPage = document.getElementById("patientsPage")
-    var appointmentsPage = document.getElementById("appointmentsPage")
+if (searchInput) {
+    searchInput.addEventListener("input", function () {
+        let query = searchInput.value.toLowerCase()
+        let patientsPage = document.getElementById("patientsPage")
+        let appointmentsPage = document.getElementById("appointmentsPage")
 
-    if (dashboardPage && !dashboardPage.classList.contains("hidden")) {
-        if (query.trim().length > 0) {
-            showPage("patients")
+        if (patientsPage && !patientsPage.classList.contains("hidden")) {
+            let rows = document.querySelectorAll("#patientTableBody tr")
+            rows.forEach(function (row) {
+                let text = row.textContent.toLowerCase()
+                row.style.display = text.includes(query) ? "" : "none"
+            })
         }
-    }
 
-    if (!patientsPage.classList.contains("hidden")) {
-        var rows = document.querySelectorAll("#patientTableBody tr")
-        rows.forEach(function (row) {
-            var text = row.textContent.toLowerCase()
-            row.style.display = text.includes(query) ? "" : "none"
-        })
-    }
-
-    if (!appointmentsPage.classList.contains("hidden")) {
-        var rows = document.querySelectorAll("#apptTableBody tr")
-        rows.forEach(function (row) {
-            var text = row.textContent.toLowerCase()
-            row.style.display = text.includes(query) ? "" : "none"
-        })
-    }
-})
+        if (appointmentsPage && !appointmentsPage.classList.contains("hidden")) {
+            let rows = document.querySelectorAll("#apptTableBody tr")
+            rows.forEach(function (row) {
+                let text = row.textContent.toLowerCase()
+                row.style.display = text.includes(query) ? "" : "none"
+            })
+        }
+    })
+}

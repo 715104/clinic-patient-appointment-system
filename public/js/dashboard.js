@@ -4,41 +4,73 @@ function loadDashboard() {
             return response.json()
         })
         .then(function (appointments) {
-            fetch("/patients")
-                .then(function (response) {
-                    return response.json()
-                })
-                .then(function (patients) {
-                    var today = new Date()
-                    var todayStr = today.toISOString().split("T")[0]
+            let today = new Date()
+            let todayYear = today.getFullYear()
+            let todayMonth = String(today.getMonth() + 1).padStart(2, "0")
+            let todayDate = String(today.getDate()).padStart(2, "0")
+            let todayStr = todayYear + "-" + todayMonth + "-" + todayDate
 
-                    var todayCount = 0
-                    var scheduledCount = 0
-                    var cancelledCount = 0
+            let todayCount = 0
+            let scheduledCount = 0
+            let completedCount = 0
+            let cancelledCount = 0
 
-                    appointments.forEach(function (appt) {
-                        var apptDate = new Date(appt.appointmentDate).toISOString().split("T")[0]
-                        if (apptDate === todayStr) {
-                            todayCount++
-                        }
-                        if (appt.status === "Scheduled") {
-                            scheduledCount++
-                        }
-                        if (appt.status === "Cancelled") {
-                            cancelledCount++
-                        }
-                    })
+            appointments.forEach(function (appt) {
+                let d = new Date(appt.appointmentDate)
+                let y = d.getFullYear()
+                let m = String(d.getMonth() + 1).padStart(2, "0")
+                let day = String(d.getDate()).padStart(2, "0")
+                let apptDateStr = y + "-" + m + "-" + day
 
-                    document.getElementById("statToday").textContent = todayCount
-                    document.getElementById("statPending").textContent = patients.length
-                    document.getElementById("statAccepted").textContent = scheduledCount
-                    document.getElementById("statCancelled").textContent = cancelledCount
-                })
+                if (apptDateStr === todayStr) {
+                    todayCount++
+                }
+                if (appt.status === "Scheduled") {
+                    scheduledCount++
+                }
+                if (appt.status === "Completed") {
+                    completedCount++
+                }
+                if (appt.status === "Cancelled") {
+                    cancelledCount++
+                }
+            })
+
+            let elToday = document.getElementById("statToday")
+            let elScheduled = document.getElementById("statScheduled") || document.getElementById("statPending")
+            let elCompleted = document.getElementById("statCompleted") || document.getElementById("statAccepted")
+            let elCancelled = document.getElementById("statCancelled")
+
+            if (elToday) {
+                elToday.textContent = todayCount
+            }
+            if (elScheduled) {
+                elScheduled.textContent = scheduledCount
+            }
+            if (elCompleted) {
+                elCompleted.textContent = completedCount
+            }
+            if (elCancelled) {
+                elCancelled.textContent = cancelledCount
+            }
         })
         .catch(function () {
-            document.getElementById("statToday").textContent = "0"
-            document.getElementById("statPending").textContent = "0"
-            document.getElementById("statAccepted").textContent = "0"
-            document.getElementById("statCancelled").textContent = "0"
+            let elToday = document.getElementById("statToday")
+            let elScheduled = document.getElementById("statScheduled") || document.getElementById("statPending")
+            let elCompleted = document.getElementById("statCompleted") || document.getElementById("statAccepted")
+            let elCancelled = document.getElementById("statCancelled")
+
+            if (elToday) {
+                elToday.textContent = "0"
+            }
+            if (elScheduled) {
+                elScheduled.textContent = "0"
+            }
+            if (elCompleted) {
+                elCompleted.textContent = "0"
+            }
+            if (elCancelled) {
+                elCancelled.textContent = "0"
+            }
         })
 }
